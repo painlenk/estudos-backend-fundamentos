@@ -4,29 +4,52 @@ const app = express();
 
 app.use(express.json());
 
+let dataCourses = ["NodeJS", "Express", "NextJS"];
+
 app.get("/courses", (request, response) => {
-  const query = request.query;
-  console.log(query);
-  return response.json(["Curso 1", "Curso 2", "Curso 3"]);
+  return response.json(dataCourses);
 });
 
 app.post("/courses", (request, response) => {
-  const body = request.body;
-  console.log(body);
-  return response.json(["Curso 1", "Curso 2", "Curso 3", "Curso 4"]);
+  const { course } = request.body;
+  dataCourses.push(course);
+
+  return response.json(dataCourses);
 });
 
 app.put("/courses/:id", (request, response) => {
-  const params = request.params;
-  return response.json(["Curso 4", "Curso 5", "Curso 3"]);
+  const { id } = request.params;
+  const { course } = request.body;
+
+  if (!dataCourses[id]) {
+    return response.status(404).send("not found");
+  }
+
+  dataCourses[id] = course;
+  return response.status(201).json(dataCourses);
 });
 
 app.patch("/courses/:id", (request, response) => {
-  return response.json(["Curso 4", "Curso 7", "Curso 4"]);
+  const { id } = request.params;
+  const { course } = request.body;
+
+  if (!dataCourses[id]) {
+    return response.status(404).send("not found");
+  }
+
+  dataCourses[id] = course;
+  return response.status(201).json(dataCourses);
 });
 
 app.delete("/courses/:id", (request, response) => {
-  return response.json(["Curso 7", "Curso 4"]);
+  const { id } = request.params;
+
+  if (!dataCourses[id]) {
+    return response.status(404).json("not found");
+  }
+
+  dataCourses.splice(id, 1);
+  return response.status(200).json(dataCourses);
 });
 
 app.listen(3333);
